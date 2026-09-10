@@ -631,7 +631,7 @@ function resetSiteContent(){
 // ============================================
 // TICKET SUCCESS & QR
 // ============================================
-let activeTicket=null,scanner=null;
+let activeTicket=null,scanner=null,scanLock=false;
 
 function showTicketSuccess(b){
   activeTicket=b;
@@ -673,8 +673,12 @@ async function startScanner(){
   if(bs)bs.classList.remove("hidden");
   if(bn)bn.classList.add("hidden");
   scanner=new Html5Qrcode("reader");
-  scanner.start({facingMode:"environment"},{fps:30,qrbox:{width:250,height:250},aspectRatio:1.0},async txt=>{
+  scanner.start({facingMode:"environment"},{fps:15,qrbox:{width:280,height:180}},async txt=>{
+    if(scanLock)return;
+    scanLock=true;
+    stopScanner();
     const r=document.getElementById("scanResult");
+    r.innerHTML="<h3>⏳ Проверяю билет…</h3>";
     let b=null;
     try{
       const d=JSON.parse(txt);
@@ -687,17 +691,17 @@ async function startScanner(){
     }
     if(!b){
       r.innerHTML="<h3>✕ Билет не найден</h3><p>Проверьте QR-код.</p>";
-      stopScanner();
-      setTimeout(()=>{if(!scanner)startScanner()},1500);
+      scanLock=false;
       return;
     }
     if(b.checkedIn){
       r.innerHTML="<h3>⚠ Билет уже использован</h3><p><b>Фильм:</b> "+escapeHtml(b.movieTitle)+"</p><p><b>Место:</b> <strong>"+escapeHtml(b.seats.join(", "))+"</strong></p>";
-      stopScanner();return;
+      scanLock=false;
+      return;
     }
     window.lastScannedBookingId=b.firebaseId;
     r.innerHTML="<h3>✓ Билет найден</h3><p><b>Фильм:</b> "+escapeHtml(b.movieTitle)+"</p><p><b>Клиент:</b> "+escapeHtml(b.customerName)+"</p><p><b>Место:</b> <strong>"+escapeHtml(b.seats.join(", "))+"</strong></p><p><b>Статус:</b> Можно пропустить</p><button class='button button-main' onclick='checkInScanned()'>Пропустить гостя</button>";
-    stopScanner();
+    scanLock=false;
   }).catch(()=>{document.getElementById("scanResult").textContent="Не удалось включить камеру. Разрешите доступ к камере."});
 }
 
