@@ -347,6 +347,7 @@ function applyPermissions(){
 function showAdminPage(page,button){
   const u=getCurrentUser()||{role:"owner"},owner=u.role==="owner",perms={scanner:"scan",movies:"movies",bookings:"bookings"};
   if(!owner&&perms[page]&&!u[perms[page]]){alert("У вас нет прав на этот раздел.");return}
+  if(page!=="scanner")stopScanner();
   document.querySelectorAll(".admin-page").forEach(x=>x.classList.add("hidden"));
   document.querySelectorAll(".admin-nav").forEach(x=>x.classList.remove("active"));
   const ids={dashboard:"adminDashboard",movies:"adminMovies",announcements:"adminAnnouncements",bookings:"adminBookings",reports:"adminReports",scanner:"adminScanner",content:"adminContent",employees:"adminEmployees"};
@@ -659,12 +660,18 @@ function stopScanner(){
   if(!scanner)return;
   const s=scanner;scanner=null;
   try{s.stop().then(()=>s.clear().catch(()=>{})).catch(()=>{})}catch(e){}
+  const bs=document.getElementById("btnStopScanner"),bn=document.getElementById("btnStartScanner");
+  if(bs)bs.classList.add("hidden");
+  if(bn)bn.classList.remove("hidden");
 }
 
 async function startScanner(){
   if(!can("scan"))return alert("У вас нет права на сканирование QR.");
   if(typeof Html5Qrcode==="undefined"){document.getElementById("scanResult").textContent="Сканер не загрузился.";return}
   if(scanner)stopScanner();
+  const bs=document.getElementById("btnStopScanner"),bn=document.getElementById("btnStartScanner");
+  if(bs)bs.classList.remove("hidden");
+  if(bn)bn.classList.add("hidden");
   scanner=new Html5Qrcode("reader");
   scanner.start({facingMode:"environment"},{fps:10,qrbox:220},async txt=>{
     const r=document.getElementById("scanResult");
