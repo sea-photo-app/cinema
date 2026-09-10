@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Beach Cinema — Кино у моря</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header class="header">
+<a href="index.html" class="logo"><span>◉</span> BEACH CINEMA</a>
+<nav class="nav">
+<a href="index.html" class="active">Главная</a><a href="films.html">Афиша</a><a href="announcements.html">Новости</a><a href="booking.html">Билеты</a>
+</nav>
+<a href="booking.html" class="header-button">Забронировать</a>
+<button class="mobile-menu" onclick="toggleMenu()">☰</button>
+</header>
+<main>
+<section class="hero" id="heroSection">
+<div class="hero-bg" id="heroBg"></div>
+<div class="hero-content">
+<div class="hero-label" id="contentHeroLabel">КИНО ПОД ОТКРЫТЫМ НЕБОМ</div>
+<h1><span id="contentHeroTitle1">Фильмы.</span><br><span id="contentHeroTitle2">Море.</span><br><span id="contentHeroTitle3">Закат.</span></h1>
+<p id="contentHeroText">Устройтесь поудобнее, почувствуйте морской бриз и наслаждайтесь любимыми фильмами прямо на пляже.</p>
+<div class="hero-buttons"><a href="films.html" class="button button-main">Смотреть афишу</a><a href="#about" class="button button-outline">О кинотеатре</a></div>
+</div>
+<div class="hero-bottom"><div><strong id="heroNowLabel">Сейчас идёт</strong><span id="heroNowFilm">Загрузка...</span></div><div><strong id="heroNextLabel">Следующий сеанс</strong><span id="heroNextFilm">Загрузка...</span></div></div>
+<div class="hero-waves" aria-hidden="true"><svg viewBox="0 0 2400 120" preserveAspectRatio="none"><path class="wave wave1" d="M0,60 C150,110 300,10 450,55 C600,100 750,10 900,55 C1050,100 1200,10 1350,55 C1500,100 1650,10 1800,55 C1950,100 2100,10 2250,55 C2325,75 2385,45 2400,55 L2400,120 L0,120 Z"></path><path class="wave wave2" d="M0,70 C160,20 320,120 480,65 C640,15 800,120 960,65 C1120,15 1280,120 1440,65 C1600,15 1760,120 1920,65 C2080,15 2240,120 2400,65 L2400,120 L0,120 Z"></path></svg></div>
+</section>
+<section class="section" id="about">
+<div class="section-heading"><div><span class="eyebrow" id="contentAboutEyebrow">BEACH CINEMA</span><h2><span id="contentAboutTitle1">Здесь кино</span><br><span id="contentAboutTitle2">ощущается иначе.</span></h2></div><p id="contentAboutText">Мы объединили большой экран, морской воздух и атмосферу летнего вечера.</p></div>
+<div class="features">
+<div class="feature-card"><div class="feature-number">01</div><h3 id="contentFeature1Title">У моря</h3><p id="contentFeature1Text">Смотрите кино под открытым небом всего в нескольких шагах от воды.</p></div>
+<div class="feature-card"><div class="feature-number">02</div><h3 id="contentFeature2Title">Большой экран</h3><p id="contentFeature2Text">Качественное изображение и звук, чтобы не пропустить ни одной сцены.</p></div>
+<div class="feature-card"><div class="feature-number">03</div><h3 id="contentFeature3Title">Обычные места</h3><p id="contentFeature3Text">Все места одинаковые. Вы просто выбираете свободное место, которое вам нравится.</p></div>
+</div>
+</section>
+<section class="section dark-section">
+<div class="section-heading"><div><span class="eyebrow">СЕГОДНЯ В ПРОГРАММЕ</span><h2>Что смотрим<br>сегодня?</h2></div><a href="films.html" class="text-link">Вся афиша →</a></div>
+<div class="movie-grid" id="homeMovies"></div>
+</section>
+<section class="announcement-section"><div class="announcement-inner"><span class="eyebrow">ВАЖНАЯ ИНФОРМАЦИЯ</span><div id="homeAnnouncements">Загрузка...</div></div></section>
+<section class="cta-section"><div><span class="eyebrow" id="contentCtaEyebrow">ЛЕТНИЙ ВЕЧЕР</span><h2><span id="contentCtaTitle1">Забронируйте</span><br><span id="contentCtaTitle2">своё место.</span></h2></div><a href="booking.html" class="button button-main">Выбрать места</a></section>
+</main>
+<footer class="footer"><div class="logo"><span>◉</span> BEACH CINEMA</div><p id="contentFooterText">Кино под открытым небом.</p><div class="footer-links"><a href="films.html">Афиша</a><a href="booking.html">Билеты</a><a href="announcements.html">Новости</a><a href="admin.html">Админ</a></div></footer>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+<script src="js/firebase-config.js"></script>
+<script src="js/data.js"></script>
+<script src="js/app.js"></script><script>renderSiteContent();renderHomeMovies();renderHomeAnnouncements();renderScheduleStatus();</script>
+</body>
+</html>

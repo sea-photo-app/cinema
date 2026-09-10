@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Новости — Beach Cinema</title><link rel="stylesheet" href="css/style.css"></head>
+<body>
+<header class="header"><a href="index.html" class="logo"><span>◉</span> BEACH CINEMA</a><nav class="nav"><a href="index.html">Главная</a><a href="films.html">Афиша</a><a href="announcements.html" class="active">Новости</a><a href="booking.html">Билеты</a></nav><a href="booking.html" class="header-button">Забронировать</a></header>
+<main><section class="page-hero"><span class="eyebrow">BEACH CINEMA</span><h1>Новости</h1><p>Все важные объявления кинотеатра.</p></section><section class="section"><div class="announcement-list" id="announcementsList"></div></section></main>
+<footer class="footer"><div class="logo"><span>◉</span> BEACH CINEMA</div><p>Кино под открытым небом.</p></footer>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+<script src="js/firebase-config.js"></script>
+<script src="js/data.js"></script>
+<script src="js/app.js"></script><script>renderAnnouncements();</script>
+</body>
+</html>

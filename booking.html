@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Бронирование — Beach Cinema</title><link rel="stylesheet" href="css/style.css"></head>
+<body>
+<header class="header"><a href="index.html" class="logo"><span>◉</span> BEACH CINEMA</a><nav class="nav"><a href="index.html">Главная</a><a href="films.html">Афиша</a><a href="announcements.html">Новости</a><a href="booking.html" class="active">Билеты</a></nav><a href="films.html" class="header-button">Афиша</a></header>
+<main><section class="page-hero small"><span class="eyebrow">БРОНИРОВАНИЕ</span><h1>Выберите фильм</h1><p>Все места одинаковые — выберите любые свободные места.</p></section>
+<section class="booking-section"><div class="booking-left">
+<div class="booking-step"><span>01</span><div><h3>Фильм</h3><select id="filmSelect" onchange="loadSeats()"></select></div></div>
+<div class="booking-step"><span>02</span><div class="seat-area"><h3>Выберите места</h3><p class="seat-description">Нажмите на свободное место, чтобы выбрать его.</p><div class="screen">ЭКРАН</div><div class="seat-map" id="seatMap"></div><div class="seat-legend"><div><span class="legend-seat free"></span>Свободно</div><div><span class="legend-seat selected"></span>Выбрано</div><div><span class="legend-seat occupied"></span>Занято</div></div></div></div>
+</div>
+<aside class="booking-summary"><span class="eyebrow">ВАШ ЗАКАЗ</span><h2>Билеты</h2><div class="summary-film" id="summaryFilm">Выберите фильм</div><div class="summary-row"><span>Места</span><strong id="selectedSeatsText">—</strong></div><div class="summary-row"><span>Количество</span><strong id="ticketCount">0</strong></div><div class="summary-total"><span>Итого</span><strong id="totalPrice">0 ₽</strong></div><button class="button button-main full-width" onclick="openBookingModal()">Забронировать</button><p class="small-text">Стоимость одного места указана в выбранном сеансе.</p></aside></section></main>
+<div class="modal" id="bookingModal"><div class="modal-box"><button class="modal-close" onclick="closeBookingModal()">×</button><span class="eyebrow">БРОНИРОВАНИЕ</span><h2>Ваши данные</h2><form onsubmit="confirmBooking(event)"><input id="customerName" type="text" placeholder="Ваше имя" required><input id="customerPhone" type="tel" placeholder="Телефон" required><input id="customerEmail" type="email" placeholder="Email" required><button class="button button-main full-width">Подтвердить бронь</button></form></div></div>
+<div class="modal" id="ticketSuccessModal"><div class="modal-box ticket-success"><button class="modal-close" onclick="closeTicketSuccess()">×</button><div class="success-mark">✓</div><span class="eyebrow">ОПЛАТА ПРОШЛА</span><h2>Ваш билет готов</h2><p>Покажите этот QR-код продавцу при входе.</p><div class="ticket-info"><h3 id="ticketMovie"></h3><p>Места: <b id="ticketSeats"></b></p><p>Код: <b id="ticketCode"></b></p></div><div id="ticketQR"></div></div></div><footer class="footer"><div class="logo"><span>◉</span> BEACH CINEMA</div><p>Кино под открытым небом.</p></footer>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+<script src="js/firebase-config.js"></script>
+<script src="js/data.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script><script src="js/app.js"></script><script>initBooking();</script>
+<p class="qr-instruction">Сделайте скриншот QR-кода и сохраните его на телефоне — билет понадобится при входе.</p>
+</body>
+</html>
