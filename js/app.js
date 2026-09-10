@@ -673,7 +673,7 @@ async function startScanner(){
   if(bs)bs.classList.remove("hidden");
   if(bn)bn.classList.add("hidden");
   scanner=new Html5Qrcode("reader");
-  scanner.start({facingMode:"environment"},{fps:10,qrbox:220},async txt=>{
+  scanner.start({facingMode:"environment"},{fps:30,qrbox:{width:250,height:250},aspectRatio:1.0},async txt=>{
     const r=document.getElementById("scanResult");
     let b=null;
     try{
