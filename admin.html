@@ -1,31 +1,435 @@
 <!DOCTYPE html>
 <html lang="ru">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Админ-панель — Beach Cinema</title><link rel="stylesheet" href="css/style.css"></head>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Админ-панель — Beach Cinema</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
 <body class="admin-body">
-<div id="loginScreen" class="admin-login"><div class="login-box"><div class="logo"><span>◉</span> BEACH CINEMA</div><span class="eyebrow">ADMIN PANEL</span><h1>Вход владельца</h1><p>Введите данные администратора.</p><form onsubmit="adminLogin(event)"><input id="adminLoginInput" type="text" placeholder="Логин" required autocomplete="username"><input id="adminPassword" type="password" placeholder="Пароль" required autocomplete="current-password"><p id="loginError" class="login-error hidden">Неверный логин или пароль.</p><button class="button button-main full-width">Войти</button></form><p class="login-hint">Владелец:  · сотрудников создаёт владелец</p></div></div>
+
+<!-- ====== ЛОГИН ====== -->
+<div id="loginScreen" class="admin-login">
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="login-box">
+    <div class="logo"><span>◉</span> BEACH CINEMA</div>
+    <span class="eyebrow">ADMIN PANEL</span>
+    <h1>Вход владельца</h1>
+    <p>Введите данные администратора.</p>
+    <form onsubmit="adminLogin(event)">
+      <input id="adminLoginInput" type="text" placeholder="Логин" required autocomplete="username">
+      <input id="adminPassword" type="password" placeholder="Пароль" required autocomplete="current-password">
+      <p id="loginError" class="login-error hidden">Неверный логин или пароль.</p>
+      <button class="button button-main full-width">Войти</button>
+    </form>
+    <p class="login-hint">Владелец:  · сотрудников создаёт владелец</p>
+  </div>
+</div>
+
+<!-- ====== ПАНЕЛЬ ====== -->
 <div id="adminPanel" class="admin-panel hidden">
-<aside class="admin-sidebar"><div class="admin-logo"><span>◉</span> BEACH CINEMA</div><nav><button class="admin-nav active" onclick="showAdminPage('dashboard',this)">📊 Обзор</button><button class="admin-nav" data-permission="owner" onclick="showAdminPage('employees',this)">👥 Сотрудники</button><button class="admin-nav" data-permission="movies" onclick="showAdminPage('movies',this)">🎬 Фильмы</button><button class="admin-nav" onclick="showAdminPage('announcements',this)">📢 Объявления</button><button class="admin-nav" data-permission="bookings" onclick="showAdminPage('bookings',this)">🎟 Бронирования</button><button class="admin-nav" onclick="showAdminPage('reports',this)">📈 Отчёты</button><button class="admin-nav" data-permission="scan" onclick="showAdminPage('scanner',this)">📷 QR-сканер</button><button class="admin-nav" onclick="showAdminPage('content',this)">🖼 Контент сайта</button></nav><button class="admin-logout" onclick="adminLogout()">Выйти</button></aside>
-<main class="admin-content">
-<section id="adminDashboard" class="admin-page"><div class="admin-top"><div><span class="eyebrow">ADMIN PANEL</span><h1>Обзор</h1></div><a href="index.html" target="_blank" class="button button-outline">Открыть сайт</a></div><div class="stats-grid"><div class="stat-card"><span>Сегодня заработано</span><strong id="statToday">0 ₽</strong></div><div class="stat-card"><span>Всего заработано</span><strong id="statTotal">0 ₽</strong></div><div class="stat-card"><span>Продано билетов</span><strong id="statTickets">0</strong></div><div class="stat-card"><span>Фильмов</span><strong id="statMovies">0</strong></div></div><div class="admin-card"><div class="admin-card-header"><span class="eyebrow">ПОСЛЕДНИЕ ПРОДАЖИ</span><h2>Бронирования</h2></div><div id="dashboardBookings"></div></div></section>
-<section id="adminMovies" class="admin-page hidden"><div class="admin-top"><div><span class="eyebrow">КОНТЕНТ</span><h1>Фильмы</h1></div><button class="button button-main" onclick="openMovieModal()">+ Добавить фильм</button></div><div class="admin-card"><div id="adminMoviesList"></div></div></section>
-<section id="adminAnnouncements" class="admin-page hidden"><div class="admin-top"><div><span class="eyebrow">НОВОСТИ</span><h1>Объявления</h1></div><button class="button button-main" onclick="openAnnouncementModal()">+ Новое объявление</button></div><div class="admin-card"><div id="adminAnnouncementsList"></div></div></section>
-<section id="adminBookings" class="admin-page hidden"><div class="admin-top"><div><span class="eyebrow">ПРОДАЖИ</span><h1>Бронирования</h1></div><button class="button button-main" onclick="openAdminBookingModal()">+ Новая бронь без оплаты</button></div><div class="admin-card"><div id="adminBookingsList"></div></div></section>
-<section id="adminReports" class="admin-page hidden"><div class="admin-top"><div><span class="eyebrow">АНАЛИТИКА</span><h1>Отчёты</h1></div><button class="button button-main" onclick="saveTodayReport()">Сохранить отчёт за сегодня</button></div><div class="stats-grid"><div class="stat-card"><span>Выручка</span><strong id="reportRevenue">0 ₽</strong></div><div class="stat-card"><span>Средний чек</span><strong id="reportAverage">0 ₽</strong></div><div class="stat-card"><span>Продано мест</span><strong id="reportSeats">0</strong></div></div><div class="admin-card"><span class="eyebrow">ОТЧЁТ ПО ФИЛЬМАМ</span><h2>Продажи</h2><div id="movieReports"></div></div><div class="admin-card"><span class="eyebrow">АРХИВ</span><h2>Сохранённые отчёты по дням</h2><p class="small-text" style="margin-bottom:20px">Отчёт за день сохраняется отдельно от общей статистики и не зависит от бронирований — его можно удалить в любой момент, как и запись о выручке.</p><div id="dailyReportsList"></div></div></section>
-<section id="adminScanner" class="admin-page hidden"><div class="admin-top"><div><span class="eyebrow">ВХОД</span><h1>QR-сканер</h1></div></div><div class="admin-card"><p>Отсканируйте QR-код билета. Камера покажет место клиента.</p><div id="reader" class="qr-reader"></div><div class="scanner-buttons"><button class="button button-main" id="btnStartScanner" onclick="startScanner()">Включить камеру</button> <button class="button button-stop hidden" id="btnStopScanner" onclick="stopScanner()">✕ Остановить камеру</button></div><div id="scanResult" class="scan-result">Ожидание сканирования…</div></div></section><section id="adminEmployees" class="admin-page hidden"><div class="admin-top"><div><span class="eyebrow">ДОСТУП</span><h1>Сотрудники</h1><p class="small-text">Создавайте продавцов и выдавайте им права.</p></div><button class="button button-main" onclick="openEmployeeModal()">+ Добавить сотрудника</button></div><div class="admin-card"><div id="employeesList"></div></div></section><section id="adminContent" class="admin-page hidden"><div class="admin-top"><div><span class="eyebrow">САЙТ</span><h1>Тексты и фото</h1></div><button class="button button-outline" onclick="resetSiteContent()">Сбросить к исходному</button></div>
-<div class="admin-card"><h2>Главный экран</h2><label class="file-label">Ярлык над заголовком</label><input id="cHeroLabel"><label class="file-label">Заголовок — строка 1</label><input id="cHeroTitle1"><label class="file-label">Заголовок — строка 2</label><input id="cHeroTitle2"><label class="file-label">Заголовок — строка 3 (выделяется цветом)</label><input id="cHeroTitle3"><label class="file-label">Текст под заголовком</label><textarea id="cHeroText"></textarea><label class="file-label">Фоновое фото (пляж/море)</label><input id="cHeroImage" type="file" accept="image/*" onchange="previewContentImage(this,'cHeroImagePreview')"><img id="cHeroImagePreview" class="movie-image-preview hidden"></div>
-<div class="admin-card"><h2>Блок «О кинотеатре»</h2><label class="file-label">Ярлык</label><input id="cAboutEyebrow"><label class="file-label">Заголовок — строка 1</label><input id="cAboutTitle1"><label class="file-label">Заголовок — строка 2</label><input id="cAboutTitle2"><label class="file-label">Текст</label><textarea id="cAboutText"></textarea></div>
-<div class="admin-card"><h2>Три преимущества</h2><label class="file-label">01 · Заголовок</label><input id="cFeature1Title"><label class="file-label">01 · Текст</label><textarea id="cFeature1Text"></textarea><label class="file-label">02 · Заголовок</label><input id="cFeature2Title"><label class="file-label">02 · Текст</label><textarea id="cFeature2Text"></textarea><label class="file-label">03 · Заголовок</label><input id="cFeature3Title"><label class="file-label">03 · Текст</label><textarea id="cFeature3Text"></textarea></div>
-<div class="admin-card"><h2>Блок бронирования и подвал</h2><label class="file-label">Ярлык</label><input id="cCtaEyebrow"><label class="file-label">Заголовок — строка 1</label><input id="cCtaTitle1"><label class="file-label">Заголовок — строка 2</label><input id="cCtaTitle2"><label class="file-label">Текст в подвале сайта</label><input id="cFooterText"></div>
-<button class="button button-main full-width" id="saveContentBtn" onclick="saveSiteContentForm()">Сохранить изменения</button>
-</section>
-</main></div>
-<div class="modal" id="employeeModal"><div class="modal-box"><button class="modal-close" onclick="closeEmployeeModal()">×</button><span class="eyebrow">СОТРУДНИК</span><h2>Добавить сотрудника</h2><form id="employeeForm" onsubmit="saveEmployee(event)"><input id="employeeName" placeholder="Имя сотрудника" required><input id="employeeLogin" placeholder="Логин" required autocomplete="off"><input id="employeePassword" type="password" placeholder="Пароль" required autocomplete="new-password"><div class="permission-list"><label><input id="permScan" type="checkbox" checked> Сканировать QR и пропускать гостей</label><label><input id="permMovies" type="checkbox" checked> Добавлять и удалять фильмы в афише</label><label><input id="permBookings" type="checkbox"> Смотреть бронирования</label></div><button class="button button-main full-width">Создать сотрудника</button></form></div></div><div class="modal" id="movieModal"><div class="modal-box"><button class="modal-close" onclick="closeMovieModal()">×</button><span class="eyebrow">ФИЛЬМ</span><h2>Добавить фильм</h2><form onsubmit="saveMovie(event)"><input id="movieTitle" placeholder="Название фильма" required><input id="movieGenre" placeholder="Жанр" required><input id="movieDate" type="date" required><input id="movieTime" type="time" required><p class="small-text" style="margin:-8px 0 12px">Дата и время подставлены с перерывом от 10 минут после предыдущего фильма — можно изменить.</p><label class="file-label">Длительность фильма, минут</label><input id="movieDuration" type="number" placeholder="Например, 120" min="30" step="5" required><input id="moviePrice" type="number" placeholder="Цена билета" min="0" required><label class="file-label" for="movieImage">Фото постера</label><input id="movieImage" type="file" accept="image/*" onchange="previewMovieImage(this)"><img id="movieImagePreview" class="movie-image-preview hidden"><textarea id="movieDescription" placeholder="Описание фильма"></textarea><button class="button button-main full-width" id="saveMovieBtn">Сохранить фильм</button></form></div></div>
-<div class="modal" id="announcementModal"><div class="modal-box"><button class="modal-close" onclick="closeAnnouncementModal()">×</button><span class="eyebrow">НОВОСТЬ</span><h2>Новое объявление</h2><form onsubmit="saveAnnouncement(event)"><input id="announcementTitle" placeholder="Заголовок" required><textarea id="announcementText" placeholder="Текст объявления" required></textarea><button class="button button-main full-width">Опубликовать</button></form></div></div>
-<div class="modal" id="adminBookingModal"><div class="modal-box"><button class="modal-close" onclick="closeAdminBookingModal()">×</button><span class="eyebrow">БРОНЬ АДМИНА</span><h2>Бронь без оплаты</h2><div class="booking-step"><span>01</span><div><h3>Фильм</h3><select id="filmSelect" onchange="loadSeats()"></select></div></div><div class="booking-step"><span>02</span><div class="seat-area"><h3>Выберите места</h3><div class="screen">ЭКРАН</div><div class="seat-map" id="seatMap"></div><div class="seat-legend"><div><span class="legend-seat free"></span>Свободно</div><div><span class="legend-seat selected"></span>Выбрано</div><div><span class="legend-seat occupied"></span>Занято</div></div></div></div><div class="summary-film" id="summaryFilm">Выберите фильм</div><div class="summary-row"><span>Места</span><strong id="selectedSeatsText">—</strong></div><div class="summary-row"><span>Количество</span><strong id="ticketCount">0</strong></div><div class="summary-total"><span>Обычная стоимость</span><strong id="totalPrice">0 ₽</strong></div><form onsubmit="confirmAdminBooking(event)"><input id="adminCustomerName" type="text" placeholder="Имя клиента (необязательно)"><button class="button button-main full-width">Забронировать без оплаты</button></form></div></div>
+  <aside class="admin-sidebar">
+    <div class="admin-logo"><span>◉</span> BEACH CINEMA</div>
+    <div class="side-user">
+      <div class="ava" id="currentUserAva">В</div>
+      <div>
+        <b id="currentUserName">Владелец</b>
+        <span id="adminRoleLabel">ВЛАДЕЛЕЦ</span>
+      </div>
+    </div>
+    <nav>
+      <button class="admin-nav active" onclick="showAdminPage('dashboard',this)"><span class="nav-emoji">📊</span>Обзор</button>
+      <button class="admin-nav" data-permission="owner" onclick="showAdminPage('employees',this)"><span class="nav-emoji">👥</span>Сотрудники</button>
+      <button class="admin-nav" data-permission="movies" onclick="showAdminPage('movies',this)"><span class="nav-emoji">🎬</span>Фильмы</button>
+      <button class="admin-nav" data-permission="owner" onclick="showAdminPage('announcements',this)"><span class="nav-emoji">📢</span>Объявления</button>
+      <button class="admin-nav" data-permission="bookings" onclick="showAdminPage('bookings',this)"><span class="nav-emoji">🎟</span>Бронирования</button>
+      <button class="admin-nav" data-permission="menu" onclick="showAdminPage('menu',this)"><span class="nav-emoji">🍔</span>Меню</button>
+      <button class="admin-nav" data-permission="orders" onclick="showAdminPage('orders',this)"><span class="nav-emoji">🛵</span>Заказы еды</button>
+      <button class="admin-nav" data-permission="orders" onclick="showAdminPage('cash',this)"><span class="nav-emoji">💵</span>Касса</button>
+      <button class="admin-nav" data-permission="owner" onclick="showAdminPage('reports',this)"><span class="nav-emoji">📈</span>Отчёты</button>
+      <button class="admin-nav" data-permission="scan" onclick="showAdminPage('scanner',this)"><span class="nav-emoji">📷</span>QR-сканер</button>
+      <button class="admin-nav" data-permission="owner" onclick="showAdminPage('content',this)"><span class="nav-emoji">🖼</span>Контент сайта</button>
+    </nav>
+    <button class="admin-logout" onclick="adminLogout()"><span>Выйти из панели</span><span>→</span></button>
+  </aside>
+
+  <main class="admin-content">
+
+    <!-- ОБЗОР -->
+    <section id="adminDashboard" class="admin-page active">
+      <div class="admin-top">
+        <div>
+          <span class="eyebrow">ADMIN PANEL</span>
+          <h1>Обзор</h1>
+        </div>
+        <div style="display:flex;align-items:flex-end;gap:14px;flex-wrap:wrap">
+          <div class="admin-date"><b id="adminDateLabel">—</b>Сегодня</div>
+          <a href="index.html" target="_blank" class="button button-ghost">Открыть сайт ↗</a>
+        </div>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card"><span class="stat-icon">📅</span><span>Сегодня заработано</span><strong id="statToday">0 ₽</strong></div>
+        <div class="stat-card"><span class="stat-icon">💰</span><span>Всего заработано</span><strong id="statTotal">0 ₽</strong></div>
+        <div class="stat-card"><span class="stat-icon">🎟</span><span>Продано билетов</span><strong id="statTickets">0</strong></div>
+        <div class="stat-card"><span class="stat-icon">🎬</span><span>Фильмов в афише</span><strong id="statMovies">0</strong></div>
+      </div>
+      <div class="admin-card">
+        <div class="admin-card-header"><span class="eyebrow">ПОСЛЕДНИЕ ПРОДАЖИ</span><h2>Бронирования</h2></div>
+        <div id="dashboardBookings"></div>
+      </div>
+    </section>
+
+    <!-- ФИЛЬМЫ -->
+    <section id="adminMovies" class="admin-page hidden">
+      <div class="admin-top">
+        <div>
+          <span class="eyebrow">КОНТЕНТ</span>
+          <h1>Фильмы</h1>
+        </div>
+        <button class="button button-main" onclick="openMovieModal()">+ Добавить фильм</button>
+      </div>
+      <div class="admin-card"><div id="adminMoviesList"></div></div>
+    </section>
+
+    <!-- ОБЪЯВЛЕНИЯ -->
+    <section id="adminAnnouncements" class="admin-page hidden">
+      <div class="admin-top">
+        <div>
+          <span class="eyebrow">НОВОСТИ</span>
+          <h1>Объявления</h1>
+        </div>
+        <button class="button button-main" onclick="openAnnouncementModal()">+ Новое объявление</button>
+      </div>
+      <div class="admin-card"><div id="adminAnnouncementsList"></div></div>
+    </section>
+
+    <!-- БРОНИРОВАНИЯ -->
+    <section id="adminBookings" class="admin-page hidden">
+      <div class="admin-top">
+        <div>
+          <span class="eyebrow">ПРОДАЖИ</span>
+          <h1>Бронирования</h1>
+        </div>
+        <button class="button button-main" data-permission="owner" onclick="openAdminBookingModal()">+ Новая бронь без оплаты</button>
+      </div>
+      <div class="admin-card"><div id="adminBookingsList"></div></div>
+    </section>
+
+    <!-- МЕНЮ -->
+    <section id="adminMenu" class="admin-page hidden">
+      <div class="admin-top">
+        <div>
+          <span class="eyebrow">ЕДА</span>
+          <h1>Меню</h1>
+          <p class="small-text">Переключайте «нет сегодня» прямо на карточке. Добавление и удаление позиций — только владелец.</p>
+        </div>
+        <button class="button button-main" data-permission="owner" onclick="openMenuItemModal()">+ Добавить позицию</button>
+      </div>
+      <div class="admin-card"><div id="adminMenuList"></div></div>
+    </section>
+
+    <!-- ЗАКАЗЫ ЕДЫ -->
+    <section id="adminOrders" class="admin-page hidden">
+      <div class="admin-top">
+        <div>
+          <span class="eyebrow">ЕДА</span>
+          <h1>Заказы еды</h1>
+          <p class="small-text">Заказы гостей по коду: видны места, код и фильм. Выданные заказы можно удалять — они считаются полученными деньгами.</p>
+        </div>
+        <button class="button button-ghost" onclick="resetAllCodes()">♻ Сбросить коды</button>
+      </div>
+      <div class="admin-card"><div id="adminOrdersList"></div></div>
+    </section>
+
+    <!-- КАССА ОПЕРАТОРА -->
+    <section id="adminCash" class="admin-page hidden">
+      <div class="admin-top">
+        <div>
+          <span class="eyebrow">ЕДА</span>
+          <h1>Касса оператора</h1>
+          <p class="small-text">Только выручка с заказов еды. Деньги за еду также попадают в общий отчёт владельца.</p>
+        </div>
+        <button class="button button-main" onclick="saveFoodReportToday()">💾 Сохранить отчёт за сегодня</button>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card"><span class="stat-icon">🍟</span><span>Сегодня с заказов</span><strong id="cashToday">0 ₽</strong></div>
+        <div class="stat-card"><span class="stat-icon">✅</span><span>Выдано заказов сегодня</span><strong id="cashTodayCount">0</strong></div>
+      </div>
+      <div class="admin-card">
+        <span class="eyebrow">АРХИВ</span>
+        <h2>Отчёты кассы по дням</h2>
+        <p class="small-text" style="margin-bottom:20px">Каждый вечер оператор сохраняет отчёт за день — сумма только по выданным заказам.</p>
+        <div id="adminCashList"></div>
+      </div>
+    </section>
+
+    <!-- ОТЧЁТЫ -->
+    <section id="adminReports" class="admin-page hidden">
+      <div class="admin-top">
+        <div>
+          <span class="eyebrow">АНАЛИТИКА</span>
+          <h1>Отчёты</h1>
+        </div>
+        <button class="button button-main" onclick="saveTodayReport()">💾 Сохранить отчёт за сегодня</button>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card"><span class="stat-icon">💵</span><span>Выручка (билеты+еда)</span><strong id="reportRevenue">0 ₽</strong></div>
+        <div class="stat-card"><span class="stat-icon">🧾</span><span>Средний чек</span><strong id="reportAverage">0 ₽</strong></div>
+        <div class="stat-card"><span class="stat-icon">💺</span><span>Продано мест</span><strong id="reportSeats">0</strong></div>
+        <div class="stat-card"><span class="stat-icon">🍿</span><span>Выручка с еды</span><strong id="reportFood">0 ₽</strong></div>
+      </div>
+      <div class="admin-card">
+        <span class="eyebrow">ОТЧЁТ ПО ФИЛЬМАМ</span>
+        <h2>Продажи</h2>
+        <div id="movieReports"></div>
+      </div>
+      <div class="admin-card">
+        <span class="eyebrow">АРХИВ</span>
+        <h2>Сохранённые отчёты по дням</h2>
+        <p class="small-text" style="margin-bottom:20px">Отчёт за день сохраняется отдельно от общей статистики и не зависит от бронирований — его можно удалить в любой момент, как и запись о выручке.</p>
+        <div id="dailyReportsList"></div>
+      </div>
+    </section>
+
+    <!-- QR-СКАНЕР -->
+    <section id="adminScanner" class="admin-page hidden">
+      <div class="admin-top">
+        <div>
+          <span class="eyebrow">ВХОД</span>
+          <h1>QR-сканер</h1>
+        </div>
+      </div>
+      <div class="admin-card">
+        <p>Отсканируйте QR-код билета. Камера покажет место клиента и выдаст код заказа еды.</p>
+        <div id="reader" class="qr-reader"></div>
+        <div class="scanner-buttons">
+          <button class="button button-main" id="btnStartScanner" onclick="startScanner()">📷 Включить камеру</button>
+          <button class="button button-stop hidden" id="btnStopScanner" onclick="stopScanner()">✕ Остановить камеру</button>
+        </div>
+        <div id="scanResult" class="scan-result">Ожидание сканирования…</div>
+      </div>
+    </section>
+
+    <!-- СОТРУДНИКИ -->
+    <section id="adminEmployees" class="admin-page hidden">
+      <div class="admin-top">
+        <div>
+          <span class="eyebrow">ДОСТУП</span>
+          <h1>Сотрудники</h1>
+          <p class="small-text">Кассир — фильмы, брони и QR-сканер. Оператор заказов — меню, заказы и касса. Всё остальное — только владелец.</p>
+        </div>
+        <button class="button button-main" onclick="openEmployeeModal()">+ Добавить сотрудника</button>
+      </div>
+      <div class="admin-card"><div id="employeesList"></div></div>
+    </section>
+
+    <!-- КОНТЕНТ САЙТА -->
+    <section id="adminContent" class="admin-page hidden">
+      <div class="admin-top">
+        <div>
+          <span class="eyebrow">САЙТ</span>
+          <h1>Тексты и фото</h1>
+        </div>
+        <button class="button button-ghost" onclick="resetSiteContent()">↺ Сбросить к исходному</button>
+      </div>
+      <div class="admin-card">
+        <span class="eyebrow">САЙТ</span>
+        <h2>Главный экран</h2>
+        <label class="file-label">Ярлык над заголовком</label>
+        <input id="cHeroLabel">
+        <label class="file-label">Заголовок — строка 1</label>
+        <input id="cHeroTitle1">
+        <label class="file-label">Заголовок — строка 2</label>
+        <input id="cHeroTitle2">
+        <label class="file-label">Заголовок — строка 3 (выделяется цветом)</label>
+        <input id="cHeroTitle3">
+        <label class="file-label">Текст под заголовком</label>
+        <textarea id="cHeroText"></textarea>
+        <label class="file-label">Фоновое фото (пляж/море)</label>
+        <input id="cHeroImage" type="file" accept="image/*" onchange="previewContentImage(this,'cHeroImagePreview')">
+        <img id="cHeroImagePreview" class="movie-image-preview hidden">
+      </div>
+      <div class="admin-card">
+        <span class="eyebrow">САЙТ</span>
+        <h2>Блок «О кинотеатре»</h2>
+        <label class="file-label">Ярлык</label>
+        <input id="cAboutEyebrow">
+        <label class="file-label">Заголовок — строка 1</label>
+        <input id="cAboutTitle1">
+        <label class="file-label">Заголовок — строка 2</label>
+        <input id="cAboutTitle2">
+        <label class="file-label">Текст</label>
+        <textarea id="cAboutText"></textarea>
+      </div>
+      <div class="admin-card">
+        <span class="eyebrow">САЙТ</span>
+        <h2>Три преимущества</h2>
+        <label class="file-label">01 · Заголовок</label>
+        <input id="cFeature1Title">
+        <label class="file-label">01 · Текст</label>
+        <textarea id="cFeature1Text"></textarea>
+        <label class="file-label">02 · Заголовок</label>
+        <input id="cFeature2Title">
+        <label class="file-label">02 · Текст</label>
+        <textarea id="cFeature2Text"></textarea>
+        <label class="file-label">03 · Заголовок</label>
+        <input id="cFeature3Title">
+        <label class="file-label">03 · Текст</label>
+        <textarea id="cFeature3Text"></textarea>
+      </div>
+      <div class="admin-card">
+        <span class="eyebrow">САЙТ</span>
+        <h2>Блок бронирования и подвал</h2>
+        <label class="file-label">Ярлык</label>
+        <input id="cCtaEyebrow">
+        <label class="file-label">Заголовок — строка 1</label>
+        <input id="cCtaTitle1">
+        <label class="file-label">Заголовок — строка 2</label>
+        <input id="cCtaTitle2">
+        <label class="file-label">Текст в подвале сайта</label>
+        <input id="cFooterText">
+      </div>
+      <button class="button button-main" id="saveContentBtn" onclick="saveSiteContentForm()">Сохранить изменения</button>
+    </section>
+
+  </main>
+</div>
+
+<!-- ====== МОДАЛКИ ====== -->
+<div class="modal" id="ticketSuccessModal">
+  <div class="modal-box ticket-success">
+    <button class="modal-close" onclick="closeTicketSuccess()">×</button>
+    <div class="success-mark">✓</div>
+    <span class="eyebrow">БРОНЬ СОЗДАНА</span>
+    <h2>QR-билет готов</h2>
+    <p>Отправьте или покажите этот QR-код гостю — по нему пройдут через сканер.</p>
+    <div class="ticket-info">
+      <h3 id="ticketMovie"></h3>
+      <p>Места: <b id="ticketSeats"></b></p>
+      <p>Код: <b id="ticketCode"></b></p>
+    </div>
+    <div id="ticketQR"></div>
+  </div>
+</div>
+
+<div class="modal" id="employeeModal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeEmployeeModal()">×</button>
+    <span class="eyebrow">СОТРУДНИК</span>
+    <h2>Добавить сотрудника</h2>
+    <form id="employeeForm" onsubmit="saveEmployee(event)">
+      <input id="employeeName" placeholder="Имя сотрудника" required>
+      <input id="employeeLogin" placeholder="Логин" required autocomplete="off">
+      <input id="employeePassword" type="password" placeholder="Пароль" required autocomplete="new-password">
+      <label class="file-label">Роль</label>
+      <select id="employeeRole" required>
+        <option value="cashier">Обычный кассир</option>
+        <option value="order">Оператор заказов</option>
+      </select>
+      <p class="small-text">Кассир: фильмы, брони и QR-сканер. Оператор: меню, заказы и касса.</p>
+      <button class="button button-main full-width">Создать сотрудника</button>
+    </form>
+  </div>
+</div>
+
+<div class="modal" id="movieModal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeMovieModal()">×</button>
+    <span class="eyebrow">ФИЛЬМ</span>
+    <h2>Добавить фильм</h2>
+    <form onsubmit="saveMovie(event)">
+      <input id="movieTitle" placeholder="Название фильма" required>
+      <input id="movieGenre" placeholder="Жанр" required>
+      <input id="movieDate" type="date" required>
+      <input id="movieTime" type="time" required>
+      <p class="small-text" style="margin:-8px 0 12px">Дата и время подставлены с перерывом от 10 минут после предыдущего фильма — можно изменить.</p>
+      <label class="file-label">Длительность фильма, минут</label>
+      <input id="movieDuration" type="number" placeholder="Например, 120" min="30" step="5" required>
+      <input id="moviePrice" type="number" placeholder="Цена билета" min="0" required>
+      <label class="file-label" for="movieImage">Фото постера</label>
+      <input id="movieImage" type="file" accept="image/*" onchange="previewMovieImage(this)">
+      <img id="movieImagePreview" class="movie-image-preview hidden">
+      <textarea id="movieDescription" placeholder="Описание фильма"></textarea>
+      <button class="button button-main full-width" id="saveMovieBtn">Сохранить фильм</button>
+    </form>
+  </div>
+</div>
+
+<div class="modal" id="announcementModal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeAnnouncementModal()">×</button>
+    <span class="eyebrow">НОВОСТЬ</span>
+    <h2>Новое объявление</h2>
+    <form onsubmit="saveAnnouncement(event)">
+      <input id="announcementTitle" placeholder="Заголовок" required>
+      <textarea id="announcementText" placeholder="Текст объявления" required></textarea>
+      <button class="button button-main full-width">Опубликовать</button>
+    </form>
+  </div>
+</div>
+
+<div class="modal" id="menuItemModal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeMenuItemModal()">×</button>
+    <span class="eyebrow">МЕНЮ</span>
+    <h2>Новая позиция</h2>
+    <form onsubmit="saveMenuItem(event)">
+      <input id="menuItemName" placeholder="Название (напр. Попкорн солёный)" required>
+      <label class="file-label">Категория</label>
+      <select id="menuItemCategory">
+        <option>Закуски</option>
+        <option>Горячее</option>
+        <option>Напитки</option>
+        <option>Десерты</option>
+      </select>
+      <label class="file-label">Цена, ₽</label>
+      <input id="menuItemPrice" type="number" placeholder="Например, 250" min="0" required>
+      <button class="button button-main full-width">Добавить позицию</button>
+    </form>
+  </div>
+</div>
+
+<div class="modal" id="adminBookingModal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeAdminBookingModal()">×</button>
+    <span class="eyebrow">БРОНЬ АДМИНА</span>
+    <h2>Бронь без оплаты</h2>
+    <div class="booking-step"><span>01</span><div><h3>Фильм</h3><select id="filmSelect" onchange="loadSeats()"></select></div></div>
+    <div class="booking-step"><span>02</span>
+      <div class="seat-area">
+        <h3>Выберите места</h3>
+        <div class="screen">ЭКРАН</div>
+        <div class="seat-viewport">
+          <div class="seat-stage">
+            <div class="seat-map" id="seatMap"></div>
+          </div>
+        </div>
+        <div class="seat-legend">
+          <div><span class="legend-seat free"></span>Свободно</div>
+          <div><span class="legend-seat selected"></span>Выбрано</div>
+          <div><span class="legend-seat occupied"></span>Занято</div>
+        </div>
+      </div>
+    </div>
+    <div class="summary-film" id="summaryFilm">Выберите фильм</div>
+    <div class="summary-row"><span>Места</span><strong id="selectedSeatsText">—</strong></div>
+    <div class="summary-row"><span>Количество</span><strong id="ticketCount">0</strong></div>
+    <div class="summary-total"><span>Обычная стоимость</span><strong id="totalPrice">0 ₽</strong></div>
+    <form onsubmit="confirmAdminBooking(event)">
+      <input id="adminCustomerName" type="text" placeholder="Имя клиента (необязательно)">
+      <button class="button button-main full-width">Забронировать без оплаты</button>
+    </form>
+  </div>
+</div>
+
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
 <script src="js/firebase-config.js"></script>
 <script src="js/data.js"></script>
-<script src="https://unpkg.com/html5-qrcode"></script><script src="js/app.js"></script><script>initAdmin();</script>
+<script src="https://unpkg.com/html5-qrcode"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+<script src="js/app.js"></script>
+<script>initAdmin();</script>
 </body>
 </html>

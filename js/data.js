@@ -104,6 +104,95 @@ async function fbSaveSiteContent(data) {
 }
 
 // ============================================
+// MENU (еда)
+// ============================================
+// При первом обращении пустая коллекция заполняется дефолтными позициями
+// (DEFAULT_MENU объявлен в app.js).
+async function fbGetMenu() {
+  const snap = await db.collection("menu").get();
+  const items = snap.docs.map(d => ({ firebaseId: d.id, ...d.data() }));
+  if (!items.length && typeof DEFAULT_MENU !== "undefined") {
+    for (const it of DEFAULT_MENU) {
+      await db.collection("menu").add(it);
+    }
+    const snap2 = await db.collection("menu").get();
+    return snap2.docs.map(d => ({ firebaseId: d.id, ...d.data() }));
+  }
+  return items;
+}
+
+async function fbAddMenuItem(item) {
+  await db.collection("menu").add(item);
+}
+
+async function fbUpdateMenu(firebaseId, data) {
+  await db.collection("menu").doc(firebaseId).update(data);
+}
+
+async function fbDeleteMenuItem(firebaseId) {
+  await db.collection("menu").doc(firebaseId).delete();
+}
+
+// ============================================
+// ACCESS CODES (коды заказа на сеанс)
+// ============================================
+async function fbGetAccessCodes() {
+  const snap = await db.collection("accessCodes").get();
+  return snap.docs.map(d => ({ firebaseId: d.id, ...d.data() }));
+}
+
+async function fbAddAccessCode(code) {
+  const ref = await db.collection("accessCodes").add(code);
+  return ref.id;
+}
+
+async function fbDeleteAccessCode(firebaseId) {
+  await db.collection("accessCodes").doc(firebaseId).delete();
+}
+
+// ============================================
+// FOOD ORDERS (заказы еды)
+// ============================================
+async function fbGetOrders() {
+  const snap = await db.collection("foodOrders").get();
+  const items = snap.docs.map(d => ({ firebaseId: d.id, ...d.data() }));
+  return items.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+}
+
+async function fbAddOrder(order) {
+  const ref = await db.collection("foodOrders").add(order);
+  return ref.id;
+}
+
+async function fbUpdateOrder(firebaseId, data) {
+  await db.collection("foodOrders").doc(firebaseId).update(data);
+}
+
+async function fbDeleteOrder(firebaseId) {
+  await db.collection("foodOrders").doc(firebaseId).delete();
+}
+
+// ============================================
+// FOOD REPORTS (касса оператора заказов)
+// ============================================
+async function fbGetFoodReports() {
+  const snap = await db.collection("foodReports").get();
+  return snap.docs.map(d => ({ firebaseId: d.id, ...d.data() }));
+}
+
+async function fbAddFoodReport(report) {
+  await db.collection("foodReports").add(report);
+}
+
+async function fbUpdateFoodReport(firebaseId, data) {
+  await db.collection("foodReports").doc(firebaseId).update(data);
+}
+
+async function fbDeleteFoodReport(firebaseId) {
+  await db.collection("foodReports").doc(firebaseId).delete();
+}
+
+// ============================================
 // DAILY REPORTS
 // ============================================
 async function fbGetDailyReports() {
